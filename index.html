@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan Approval SA Track — Maple Trust Bank</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --tag-blue: #1f6feb;
+      --tag-red: #da3633;
+      --tag-orange: #d29922;
+      --tag-green: #238636;
+      --gap-high: #3d1a1a;
+      --gap-med: #2d2208;
+      --gap-low: #122113;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0;
+      padding: 0 24px;
+      height: 52px;
+    }
+    .nav-brand {
+      font-weight: 700; font-size: 16px;
+      color: var(--text);
+      margin-right: 32px;
+      white-space: nowrap;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: background .15s, color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d2137 0%, #0d1117 60%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(35,134,54,.2);
+      border: 1px solid rgba(35,134,54,.4);
+      color: #3fb950;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(24px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #e6edf3 0%, #8b949e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+    .metric-row {
+      display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .metric {
+      text-align: center;
+    }
+    .metric-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #3fb950;
+    }
+    .metric-lbl {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .metric-arrow {
+      color: var(--tag-red);
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 26px; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-intro {
+      color: var(--muted);
+      max-width: 680px;
+      margin-bottom: 36px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .card p { color: var(--muted); font-size: 14px; }
+
+    /* ── ROLES ── */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .role-card .icon { font-size: 22px; margin-bottom: 8px; }
+    .role-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .role-card p { font-size: 12px; color: var(--muted); }
+
+    /* ── STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 20px;
+      padding: 20px 0;
+      border-left: 2px solid var(--border);
+      margin-left: 18px;
+      padding-left: 28px;
+      position: relative;
+    }
+    .step::before {
+      content: attr(data-n);
+      position: absolute;
+      left: -18px;
+      width: 34px; height: 34px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+    }
+    .step.pain::before { border-color: var(--tag-red); color: var(--tag-red); }
+    .step-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .step-content p { font-size: 13px; color: var(--muted); }
+    .pain-tag {
+      display: inline-block;
+      background: rgba(218,54,51,.15);
+      border: 1px solid rgba(218,54,51,.3);
+      color: #f85149;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 4px;
+      margin-top: 6px;
+    }
+
+    /* ── GAP TABLE ── */
+    .gap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .gap-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .gap-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .gap-table tr:hover td { background: rgba(255,255,255,.03); }
+    .gap-id {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .sev { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .sev-h { background: var(--gap-high); color: #f85149; }
+    .sev-m { background: var(--gap-med); color: #d29922; }
+    .sev-l { background: var(--gap-low); color: #3fb950; }
+
+    /* ── DIAGRAM WRAP ── */
+    .diagram-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      overflow-x: auto;
+    }
+    .diagram-box .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── RTM TABLE ── */
+    .rtm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .rtm-table th {
+      text-align: left; padding: 8px 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .rtm-table td {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .rtm-table tr:hover td { background: rgba(255,255,255,.03); }
+    .req-id { font-family: monospace; font-weight: 700; color: #79c0ff; font-size: 11px; }
+    .tag-fr { display: inline-block; background: rgba(31,111,235,.2); color: #79c0ff; border-radius: 3px; padding: 1px 6px; font-size: 10px; font-weight: 700; }
+    .tag-nfr { display: inline-block; background: rgba(210,153,34,.2); color: #d29922; border-radius: 3px; padding: 1px 6px; font-size: 10px; font-weight: 700; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all .15s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 32px 24px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: #79c0ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── UTILITIES ── */
+    .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .improvements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+    .imp-card {
+      background: rgba(35,134,54,.08);
+      border: 1px solid rgba(35,134,54,.25);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .imp-card h4 { font-size: 13px; font-weight: 600; color: #3fb950; margin-bottom: 6px; }
+    .imp-card p { font-size: 12px; color: var(--muted); }
+    .before-after {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 28px;
+    }
+    .ba-box { border-radius: 8px; padding: 16px; }
+    .ba-box.before { background: var(--gap-high); border: 1px solid rgba(218,54,51,.3); }
+    .ba-box.after { background: var(--gap-low); border: 1px solid rgba(35,134,54,.3); }
+    .ba-box h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+    .ba-box.before h4 { color: #f85149; }
+    .ba-box.after h4 { color: #3fb950; }
+    .ba-box ul { list-style: none; padding: 0; }
+    .ba-box ul li { font-size: 13px; color: var(--muted); padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .ba-box ul li:last-child { border: none; }
+    @media (max-width: 600px) {
+      .before-after { grid-template-columns: 1fr; }
+      .metric-row { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">🏦 <span>Maple Trust</span> Loan Approval</div>
+  <div class="nav-links">
+    <a href="#narrative">Narrative</a>
+    <a href="#as-is">As-Is</a>
+    <a href="#gaps">Gaps</a>
+    <a href="#to-be">To-Be</a>
+    <a href="#rtm">RTM</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="nav-brand" style="font-size:13px;color:var(--muted);margin-bottom:12px;">SA Track · BPMN Process Mapping + Gap Analysis</div>
+  <div class="hero-badge">Systems Analyst Portfolio</div>
+  <h1>Loan Approval Process</h1>
+  <p class="hero-sub">End-to-end BPMN redesign for Maple Trust Bank — from manual paper-based intake to automated digital disbursement.</p>
+  <div class="metric-row">
+    <div class="metric">
+      <div class="metric-val metric-arrow">9–12 days</div>
+      <div class="metric-lbl">As-Is cycle time</div>
+    </div>
+    <div class="metric">
+      <div style="font-size:28px;font-weight:800;color:var(--muted);">→</div>
+      <div class="metric-lbl">&nbsp;</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">≤ 2 days</div>
+      <div class="metric-lbl">To-Be target</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" style="color:#d29922;">12</div>
+      <div class="metric-lbl">Gaps identified</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" style="color:#79c0ff;">16</div>
+      <div class="metric-lbl">Requirements mapped</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" style="color:#f85149;">18%</div>
+      <div class="metric-lbl">Manual rework rate</div>
+    </div>
+  </div>
+</div>
+
+<!-- NARRATIVE -->
+<section id="narrative">
+  <div class="container">
+    <div class="section-label">Deliverable 1</div>
+    <h2>Process Narrative — As-Is</h2>
+    <p class="section-intro">Maple Trust Bank's current personal loan approval (CAD $5K–$50K) spans 7 steps and 6 roles, averaging 9–12 business days end-to-end. The process is manually intensive and paper-dependent.</p>
+
+    <div class="roles-grid" style="margin-bottom:36px;">
+      <div class="role-card">
+        <div class="icon">👤</div>
+        <h4>Customer</h4>
+        <p>Submits application and supporting documents</p>
+      </div>
+      <div class="role-card">
+        <div class="icon">🧑‍💼</div>
+        <h4>Loan Officer</h4>
+        <p>Branch intake, document review, data entry</p>
+      </div>
+      <div class="role-card">
+        <div class="icon">📊</div>
+        <h4>Underwriter</h4>
+        <p>Credit assessment, risk scoring, recommendation</p>
+      </div>
+      <div class="role-card">
+        <div class="icon">🏛️</div>
+        <h4>Credit Bureau</h4>
+        <p>External — credit report &amp; score provider</p>
+      </div>
+      <div class="role-card">
+        <div class="icon">⚖️</div>
+        <h4>Compliance Officer</h4>
+        <p>AML/KYC, sanctions screening, regulatory sign-off</p>
+      </div>
+      <div class="role-card">
+        <div class="icon">🏢</div>
+        <h4>Branch Manager</h4>
+        <p>Final approval authority for loans &gt; $25,000</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step pain" data-n="1">
+        <div class="step-content">
+          <h4>Step 1 — Application Intake (Day 0)</h4>
+          <p>Customer visits branch. Loan Officer completes a 12-page paper form and photocopies ID and pay stubs. Data is manually re-keyed into the core banking system (CBS).</p>
+          <span class="pain-tag">Pain: Dual entry — 35 min/application, 8% transcription errors</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="2">
+        <div class="step-content">
+          <h4>Step 2 — Document Verification (Day 0–1)</h4>
+          <p>LO physically checks for completeness. Missing items require a customer phone call and return visit.</p>
+          <span class="pain-tag">Pain: 22% return-visit rate</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="3">
+        <div class="step-content">
+          <h4>Step 3 — Credit Bureau Pull (Day 1–2)</h4>
+          <p>LO manually logs into bureau portal, keys applicant SIN and DOB, downloads PDF, emails to UW shared inbox. No API integration.</p>
+          <span class="pain-tag">Pain: Manual lookup, mis-routed emails</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="4">
+        <div class="step-content">
+          <h4>Step 4 — Underwriting Review (Day 2–5)</h4>
+          <p>Underwriter pulls next file from FIFO queue. DSR calculated in ad-hoc Excel sheet. Recommendation memo written manually. Queue depth averages 40 files.</p>
+          <span class="pain-tag">Pain: 3-day median queue wait, inconsistent Excel models</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="5">
+        <div class="step-content">
+          <h4>Step 5 — Compliance Review (Day 5–7)</h4>
+          <p>AML/KYC and sanctions screening — only triggered after Underwriting completes. Serial flow means Compliance rejections cause full rework.</p>
+          <span class="pain-tag">Pain: 12% rework rate from late Compliance rejections</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="6">
+        <div class="step-content">
+          <h4>Step 6 — Branch Manager Sign-off (Day 7–8)</h4>
+          <p>For loans &gt; $25K, file is couriered to originating branch for wet-ink BM signature, then couriered back.</p>
+          <span class="pain-tag">Pain: 1–2 day courier delay, pages occasionally lost</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="7">
+        <div class="step-content">
+          <h4>Step 7 — Disbursement (Day 8–12)</h4>
+          <p>Customer returns to branch in person to sign loan agreement. Funds released upon completion.</p>
+          <span class="pain-tag">Pain: 9% post-approval drop-off (customers never return)</span>
+        </div>
+      </div>
+      <div class="step pain" data-n="8">
+        <div class="step-content">
+          <h4>Step 8 — Rejection</h4>
+          <p>Rejected applicants receive a paper letter by mail within 10 business days. No adverse-action explanation provided in real time.</p>
+          <span class="pain-tag">Pain: No real-time notice; potential regulatory exposure</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AS-IS BPMN -->
+<section id="as-is">
+  <div class="container">
+    <div class="section-label">Deliverable 2</div>
+    <h2>As-Is BPMN — Current State</h2>
+    <p class="section-intro">End-to-end process flow showing all pain points (red). Steps are serial; Compliance runs only after Underwriting completes.</p>
+    <div class="diagram-box">
+      <div class="mermaid">
+flowchart TD
+    Start([fa:fa-user Customer submits application]) --> LO1[LO: Paper form intake + photocopy IDs]
+    LO1 --> LO2[/LO: Dual-entry into CBS/]
+    LO2 --> LO3{Documents complete?}
+    LO3 -- No --> LO4[Call customer, schedule return visit]
+    LO4 --> LO1
+    LO3 -- Yes --> LO5[/LO: Manual login to Credit Bureau portal/]
+    LO5 --> LO6[/Download PDF report, email to UW inbox/]
+    LO6 --> UW1[UW: Pull next file from FIFO shared inbox]
+    UW1 --> UW2[UW: Calculate DSR in Excel, write memo]
+    UW2 --> UW3{Recommend approve?}
+    UW3 -- No --> REJ1[Paper rejection letter mailed to customer]
+    REJ1 --> EndR([End: Rejected])
+    UW3 -- Yes --> CO1[CO: AML / KYC / sanctions review]
+    CO1 --> CO2{Compliance pass?}
+    CO2 -- No --> REJ1
+    CO2 -- Yes --> AMT{Loan greater than $25K?}
+    AMT -- No --> DISB1[Disbursement Clerk prepares agreement]
+    AMT -- Yes --> BM1[Courier file to originating branch]
+    BM1 --> BM2[BM: Wet-ink signature on paper]
+    BM2 --> BM3[Courier file back to hub]
+    BM3 --> DISB1
+    DISB1 --> DISB2[Customer returns to branch in person to sign]
+    DISB2 --> DISB3{Customer signs?}
+    DISB3 -- No --> EndD([End: Abandoned])
+    DISB3 -- Yes --> DISB4[Funds released to deposit account]
+    DISB4 --> EndA([End: Disbursed])
+
+    style LO2 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style LO4 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style LO6 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style UW1 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style CO1 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style BM1 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style BM3 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style DISB2 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+    style REJ1 fill:#3d1a1a,stroke:#c0392b,color:#f85149
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:12px;">🔴 Red nodes = pain points identified in the gap analysis</p>
+  </div>
+</section>
+
+<!-- GAP ANALYSIS -->
+<section id="gaps">
+  <div class="container">
+    <div class="section-label">Deliverable 3</div>
+    <h2>Gap Analysis</h2>
+    <p class="section-intro">12 gaps identified across 4 themes: integration absence, sequential bottlenecks, paper inertia, and customer experience.</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('all')">All Gaps (12)</button>
+      <button class="tab-btn" onclick="showTab('high')">🔴 High (5)</button>
+      <button class="tab-btn" onclick="showTab('med')">🟠 Medium (5)</button>
+      <button class="tab-btn" onclick="showTab('low')">🟡 Low (2)</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-all">
+      <table class="gap-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Gap</th><th>Type</th><th>Step</th><th>Severity</th><th>Root Cause</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="gap-id">GAP-01</td><td>Dual paper + CBS data entry</td><td>Manual / data quality</td><td>Step 1</td><td><span class="sev sev-m">Medium</span></td><td>No digital intake channel</td></tr>
+          <tr><td class="gap-id">GAP-02</td><td>Missing docs only caught at branch</td><td>Rework</td><td>Step 2</td><td><span class="sev sev-m">Medium</span></td><td>No upfront validation logic</td></tr>
+          <tr><td class="gap-id">GAP-03</td><td>Manual credit bureau lookup</td><td>Integration gap</td><td>Step 3</td><td><span class="sev sev-h">High</span></td><td>No API integration</td></tr>
+          <tr><td class="gap-id">GAP-04</td><td>FIFO queue, no prioritization</td><td>Bottleneck</td><td>Step 4</td><td><span class="sev sev-h">High</span></td><td>No case management system</td></tr>
+          <tr><td class="gap-id">GAP-05</td><td>DSR calculated in ad-hoc Excel</td><td>Inconsistency / risk</td><td>Step 4</td><td><span class="sev sev-m">Medium</span></td><td>No standardized rules engine</td></tr>
+          <tr><td class="gap-id">GAP-06</td><td>Compliance is serial — after UW</td><td>Serialization bottleneck</td><td>Step 5</td><td><span class="sev sev-h">High</span></td><td>Sequential process design</td></tr>
+          <tr><td class="gap-id">GAP-07</td><td>Wet-ink BM signature, courier</td><td>Manual handoff / delay</td><td>Step 6</td><td><span class="sev sev-m">Medium</span></td><td>No e-signature workflow</td></tr>
+          <tr><td class="gap-id">GAP-08</td><td>Redundant approvals on small loans</td><td>Over-control</td><td>Steps 4–6</td><td><span class="sev sev-l">Low</span></td><td>Risk policy not tiered</td></tr>
+          <tr><td class="gap-id">GAP-09</td><td>In-person customer signing</td><td>CX / drop-off</td><td>Step 7</td><td><span class="sev sev-h">High</span></td><td>No remote ID verification</td></tr>
+          <tr><td class="gap-id">GAP-10</td><td>Rejection by paper mail only</td><td>CX / compliance</td><td>Step 8</td><td><span class="sev sev-m">Medium</span></td><td>No customer-facing portal</td></tr>
+          <tr><td class="gap-id">GAP-11</td><td>No real-time status for applicant</td><td>Transparency</td><td>All</td><td><span class="sev sev-l">Low</span></td><td>No applicant portal</td></tr>
+          <tr><td class="gap-id">GAP-12</td><td>No audit trail across paper handoffs</td><td>Compliance risk</td><td>All</td><td><span class="sev sev-h">High</span></td><td>Hybrid paper/digital trail</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-panel" id="tab-high">
+      <table class="gap-table">
+        <thead><tr><th>ID</th><th>Gap</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td class="gap-id">GAP-03</td><td>Manual credit bureau lookup</td><td>15–20 min/file; mis-routed emails; PII via email</td></tr>
+          <tr><td class="gap-id">GAP-04</td><td>FIFO queue, no prioritization</td><td>3-day median queue wait; no SLA visibility</td></tr>
+          <tr><td class="gap-id">GAP-06</td><td>Compliance serial after UW</td><td>12% rework rate; adds 2–3 days when triggered</td></tr>
+          <tr><td class="gap-id">GAP-09</td><td>In-person customer signing</td><td>9% post-approval drop-off</td></tr>
+          <tr><td class="gap-id">GAP-12</td><td>No end-to-end audit trail</td><td>Regulatory exposure; difficulty proving timelines</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-panel" id="tab-med">
+      <table class="gap-table">
+        <thead><tr><th>ID</th><th>Gap</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td class="gap-id">GAP-01</td><td>Dual data entry</td><td>8% transcription errors, 35 min/application</td></tr>
+          <tr><td class="gap-id">GAP-02</td><td>Missing docs caught late</td><td>22% return-visit rate, customer friction</td></tr>
+          <tr><td class="gap-id">GAP-05</td><td>Ad-hoc Excel DSR</td><td>Inconsistent risk decisions, audit weakness</td></tr>
+          <tr><td class="gap-id">GAP-07</td><td>Wet-ink BM signature</td><td>1–2 day courier delay, lost pages</td></tr>
+          <tr><td class="gap-id">GAP-10</td><td>Rejection by paper mail</td><td>Slow adverse-action notice, NPS impact</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-panel" id="tab-low">
+      <table class="gap-table">
+        <thead><tr><th>ID</th><th>Gap</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td class="gap-id">GAP-08</td><td>Redundant approvals on small loans</td><td>Over-control adds days unnecessarily for &lt;$15K</td></tr>
+          <tr><td class="gap-id">GAP-11</td><td>No real-time status visibility</td><td>Inbound call volume; NPS cost</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- TO-BE BPMN -->
+<section id="to-be">
+  <div class="container">
+    <div class="section-label">Deliverable 4</div>
+    <h2>To-Be BPMN — Redesigned Process</h2>
+    <p class="section-intro">Redesigned flow with digital intake, automated credit scoring API, parallel UW + Compliance, tiered auto-approval, and digital e-signature.</p>
+
+    <div class="before-after">
+      <div class="ba-box before">
+        <h4>❌ Before</h4>
+        <ul>
+          <li>Paper forms + dual CBS entry</li>
+          <li>Manual bureau PDF lookup</li>
+          <li>Serial UW → Compliance</li>
+          <li>Wet-ink courier for BM</li>
+          <li>In-person customer signing</li>
+          <li>Paper rejection letters</li>
+          <li>No audit trail</li>
+        </ul>
+      </div>
+      <div class="ba-box after">
+        <h4>✅ After</h4>
+        <ul>
+          <li>Digital app + OCR extraction</li>
+          <li>Credit Bureau REST API</li>
+          <li>Parallel UW + Compliance</li>
+          <li>E-signature for BM approval</li>
+          <li>Remote ID verification + e-sign</li>
+          <li>Real-time adverse-action notice</li>
+          <li>Immutable append-only audit log</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="diagram-box">
+      <div class="mermaid">
+flowchart TD
+    Start([fa:fa-mobile Customer: digital application via web or mobile]) --> SYS1[/System: real-time field validation + doc checklist/]
+    SYS1 --> SYS2[/System: OCR extract ID and pay stub data/]
+    SYS2 --> SYS3{Documents complete?}
+    SYS3 -- No --> SYS4[/Auto-notify customer via SMS and email/]
+    SYS4 --> SYS3
+    SYS3 -- Yes --> API1[/API: Credit Bureau REST call returns JSON score/]
+    API1 --> RULES[/Rules engine: standardized DSR and risk score/]
+    RULES --> TIER{Risk tier?}
+
+    TIER -- Low risk up to 15K --> AUTO1[/System: auto-approve per policy/]
+    AUTO1 --> ESIGN
+
+    TIER -- Medium or High risk --> UW1 & CO1
+
+    UW1[UW: review case in workflow tool] --> JOIN((AND-join))
+    CO1[CO: AML and KYC and sanctions in workflow tool] --> JOIN
+
+    JOIN --> DECIDE{Both approved?}
+    DECIDE -- No --> REJ1[/System: real-time adverse-action notice via portal and email/]
+    REJ1 --> EndR([End: Rejected with reason codes])
+    DECIDE -- Yes --> AMT{Loan greater than $25K?}
+    AMT -- No --> ESIGN[/System: send e-sign package to customer/]
+    AMT -- Yes --> BM1[BM: e-sign approval in workflow tool]
+    BM1 --> ESIGN
+    ESIGN --> CUST1[Customer: remote ID verification and e-sign]
+    CUST1 --> SIGNED{Signed within SLA?}
+    SIGNED -- No --> REMIND[/Auto-remind at 24h and 72h/]
+    REMIND --> SIGNED
+    SIGNED -- Yes --> DISB[/System: auto-disburse to deposit account/]
+    DISB --> AUDIT[/System: write immutable audit trail entry/]
+    AUDIT --> EndA([End: Disbursed])
+
+    style SYS1 fill:#122113,stroke:#238636,color:#3fb950
+    style SYS2 fill:#122113,stroke:#238636,color:#3fb950
+    style SYS4 fill:#122113,stroke:#238636,color:#3fb950
+    style API1 fill:#122113,stroke:#238636,color:#3fb950
+    style RULES fill:#122113,stroke:#238636,color:#3fb950
+    style AUTO1 fill:#122113,stroke:#238636,color:#3fb950
+    style REJ1 fill:#122113,stroke:#238636,color:#3fb950
+    style ESIGN fill:#122113,stroke:#238636,color:#3fb950
+    style DISB fill:#122113,stroke:#238636,color:#3fb950
+    style AUDIT fill:#122113,stroke:#238636,color:#3fb950
+    style REMIND fill:#122113,stroke:#238636,color:#3fb950
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:12px;">🟢 Green nodes = automated / system tasks. UW and CO run in parallel (AND-split → AND-join).</p>
+
+    <div class="improvements-grid">
+      <div class="imp-card">
+        <h4>⚡ Credit Bureau API</h4>
+        <p>Replaces manual portal login — score returned in &lt;5 sec via REST call, no PII over email.</p>
+      </div>
+      <div class="imp-card">
+        <h4>⚡ Parallel Review</h4>
+        <p>AND-split sends file to UW and Compliance simultaneously — eliminates 2–3 day serial delay.</p>
+      </div>
+      <div class="imp-card">
+        <h4>⚡ Tiered Auto-Approval</h4>
+        <p>Loans ≤ $15K passing rules engine skip human review — zero queue wait for low-risk files.</p>
+      </div>
+      <div class="imp-card">
+        <h4>⚡ Digital E-Signature</h4>
+        <p>BM approves in workflow tool, customer signs remotely — courier delays and drop-off eliminated.</p>
+      </div>
+      <div class="imp-card">
+        <h4>⚡ Immutable Audit Trail</h4>
+        <p>Every state transition logged with actor, timestamp, and payload hash — regulator-ready.</p>
+      </div>
+      <div class="imp-card">
+        <h4>⚡ Real-Time Notices</h4>
+        <p>Adverse-action reasons delivered via portal and email within 60 seconds of decision.</p>
+      </div>
+    </div>
+
+    <!-- Outcomes -->
+    <div class="card" style="margin-top:24px;">
+      <h3 style="margin-bottom:16px;">Expected Outcomes</h3>
+      <table class="gap-table">
+        <thead><tr><th>Metric</th><th>As-Is</th><th>To-Be Target</th></tr></thead>
+        <tbody>
+          <tr><td>Median time-to-decision</td><td style="color:#f85149;">7 business days</td><td style="color:#3fb950;">&lt; 4 hours</td></tr>
+          <tr><td>Median time-to-disbursement</td><td style="color:#f85149;">9–12 business days</td><td style="color:#3fb950;">&lt; 2 business days</td></tr>
+          <tr><td>Manual rework rate</td><td style="color:#f85149;">18%</td><td style="color:#3fb950;">&lt; 5%</td></tr>
+          <tr><td>Post-approval drop-off</td><td style="color:#f85149;">9%</td><td style="color:#3fb950;">&lt; 2%</td></tr>
+          <tr><td>Late Compliance rejection rate</td><td style="color:#f85149;">12%</td><td style="color:#3fb950;">&lt; 3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RTM -->
+<section id="rtm">
+  <div class="container">
+    <div class="section-label">Deliverable 5</div>
+    <h2>Requirements Traceability Matrix</h2>
+    <p class="section-intro">Each gap maps to one or more system requirements (FR / NFR) and the To-Be BPMN element that realises it.</p>
+    <table class="rtm-table">
+      <thead>
+        <tr><th>Gap</th><th>Req ID</th><th>Type</th><th>Requirement</th><th>BPMN Element</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="gap-id">GAP-01</td><td class="req-id">FR-01</td><td><span class="tag-fr">FR</span></td><td>Digital application form writes directly to CBS — no rekeying</td><td>SYS1</td></tr>
+        <tr><td class="gap-id">GAP-01</td><td class="req-id">FR-02</td><td><span class="tag-fr">FR</span></td><td>OCR extracts data from ID and pay stubs and pre-populates application</td><td>SYS2</td></tr>
+        <tr><td class="gap-id">GAP-02</td><td class="req-id">FR-03</td><td><span class="tag-fr">FR</span></td><td>Document checklist enforced at submission — blocks until all mandatory artifacts uploaded</td><td>SYS1 → SYS3</td></tr>
+        <tr><td class="gap-id">GAP-03</td><td class="req-id">FR-04</td><td><span class="tag-fr">FR</span></td><td>Credit bureau integrated via REST API; score returned in &lt;5 seconds</td><td>API1</td></tr>
+        <tr><td class="gap-id">GAP-03</td><td class="req-id">NFR-01</td><td><span class="tag-nfr">NFR</span></td><td>Bureau payloads over TLS 1.3 mutual auth; no PII via email</td><td>API1</td></tr>
+        <tr><td class="gap-id">GAP-04</td><td class="req-id">FR-05</td><td><span class="tag-fr">FR</span></td><td>Case management tool with risk-weighted UW queue prioritization</td><td>UW1 (parallel)</td></tr>
+        <tr><td class="gap-id">GAP-05</td><td class="req-id">FR-06</td><td><span class="tag-fr">FR</span></td><td>DSR and risk score calculated via versioned centralized rules engine</td><td>RULES</td></tr>
+        <tr><td class="gap-id">GAP-05</td><td class="req-id">NFR-02</td><td><span class="tag-nfr">NFR</span></td><td>All risk decision inputs/outputs persisted immutably for 7 years</td><td>AUDIT</td></tr>
+        <tr><td class="gap-id">GAP-06</td><td class="req-id">FR-07</td><td><span class="tag-fr">FR</span></td><td>Parallel UW + Compliance via AND-split; joined only when both decisions recorded</td><td>AND-split / AND-join</td></tr>
+        <tr><td class="gap-id">GAP-07</td><td class="req-id">FR-08</td><td><span class="tag-fr">FR</span></td><td>Qualified e-signature for Branch Manager approval</td><td>BM1</td></tr>
+        <tr><td class="gap-id">GAP-08</td><td class="req-id">FR-09</td><td><span class="tag-fr">FR</span></td><td>Auto-approve loans ≤ $15K passing rules engine without human review</td><td>TIER → AUTO1</td></tr>
+        <tr><td class="gap-id">GAP-09</td><td class="req-id">FR-10</td><td><span class="tag-fr">FR</span></td><td>Remote ID verification and customer e-signature compliant with PIPEDA</td><td>CUST1</td></tr>
+        <tr><td class="gap-id">GAP-09</td><td class="req-id">FR-11</td><td><span class="tag-fr">FR</span></td><td>Automated e-sign reminders at 24h and 72h post-issuance</td><td>REMIND</td></tr>
+        <tr><td class="gap-id">GAP-10</td><td class="req-id">FR-12</td><td><span class="tag-fr">FR</span></td><td>Adverse-action notice via portal + email within 60 sec of rejection, with reason codes</td><td>REJ1</td></tr>
+        <tr><td class="gap-id">GAP-11</td><td class="req-id">FR-13</td><td><span class="tag-fr">FR</span></td><td>Customer portal shows real-time application status and required actions</td><td>Portal (cross-cutting)</td></tr>
+        <tr><td class="gap-id">GAP-12</td><td class="req-id">NFR-04</td><td><span class="tag-nfr">NFR</span></td><td>Immutable append-only audit log — every state transition with actor, timestamp, payload hash</td><td>AUDIT</td></tr>
+        <tr><td>All</td><td class="req-id">NFR-05</td><td><span class="tag-nfr">NFR</span></td><td>95% of low-risk applications disbursed within 2 business days</td><td>Cross-cutting SLA</td></tr>
+        <tr><td>All</td><td class="req-id">NFR-06</td><td><span class="tag-nfr">NFR</span></td><td>Customer-facing portal and APIs at 99.9% monthly availability</td><td>Cross-cutting</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:8px;font-weight:600;color:var(--text);">Maple Trust Bank — Loan Approval Process Redesign</p>
+  <p>Systems Analyst portfolio project by <strong>Sumit Jindal</strong> ·
+    <a href="https://github.com/sumitjindal1100-ui/loan-approval-sa-track" target="_blank">GitHub Repository</a>
+  </p>
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#161b22',
+      primaryColor: '#1f2937',
+      primaryTextColor: '#e6edf3',
+      primaryBorderColor: '#30363d',
+      lineColor: '#8b949e',
+      secondaryColor: '#161b22',
+      tertiaryColor: '#0d1117'
+    },
+    flowchart: { curve: 'basis', padding: 20 }
+  });
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Highlight nav on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
