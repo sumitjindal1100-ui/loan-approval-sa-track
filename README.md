@@ -1,5 +1,7 @@
 # Loan Approval Process — SA Track
 
+> **Live demo:** <https://sumitjindal1100-ui.github.io/loan-approval-sa-track/> · One of seven projects in my portfolio: <https://sumitjindal1100-ui.github.io/>
+
 **BPMN Process Mapping + Gap Analysis** for a fictional retail bank ("Maple Trust Bank") loan approval workflow.
 
 ## Executive Summary
